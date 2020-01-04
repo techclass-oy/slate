@@ -1,6 +1,5 @@
 {
-  "private": true,
-  "name": "slate-packages",
+  "name": "@techclass/slate-packages",
   "workspaces": [
     "packages/*"
   ],
