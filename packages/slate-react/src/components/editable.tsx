@@ -354,7 +354,7 @@ export const Editable = (props: EditableProps) => {
         }
       }
     },
-    []
+    [readOnly, propsOnDOMBeforeInput]
   )
 
   // Listen on the native `selectionchange` event to be able to update any time
@@ -886,16 +886,19 @@ export const Editable = (props: EditableProps) => {
         )}
         onPaste={useCallback(
           (event: React.ClipboardEvent<HTMLDivElement>) => {
-            // COMPAT: Firefox doesn't support the `beforeinput` event, so we
-            // fall back to React's `onPaste` here instead.
             if (
-              IS_FIREFOX &&
               !readOnly &&
               hasEditableTarget(editor, event.target) &&
               !isEventHandled(event, attributes.onPaste)
             ) {
-              event.preventDefault()
-              ReactEditor.insertData(editor, event.clipboardData)
+              // if the event is not handled do nothing, it will be
+              // dealt with in the onBeforeInput callback
+              // COMPAT: Firefox doesn't support the `beforeinput` event,
+              // so we fall back to React's `onPaste` here instead.
+              if (IS_FIREFOX) {
+                event.preventDefault()
+                ReactEditor.insertData(editor, event.clipboardData)
+              }
             }
           },
           [readOnly, attributes.onPaste]
